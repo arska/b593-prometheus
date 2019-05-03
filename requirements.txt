@@ -2,7 +2,7 @@ beautifulsoup4==4.6.3
 bs4==0.0.1
 certifi==2019.3.9
 chardet==3.0.4
-idna==2.7
+idna==2.8
 prometheus-client==0.4.2
 requests==2.20.1
 selenium==3.141.0
