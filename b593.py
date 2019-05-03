@@ -4,22 +4,24 @@ Module for getting statistics from a Huawei B593 4G-router
 pushed into prometheus
 """
 
+import json
+import os
+import platform
+import re
 import requests
 import xmltodict
-import re
 from prometheus_client import (
     Gauge,
     Summary,
     CollectorRegistry,
     pushadd_to_gateway,
 )
-import platform
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-import json
+from dotenv import load_dotenv
 
 
 class HuaweiB593:
@@ -125,23 +127,23 @@ class HuaweiB593:
             EC.presence_of_element_located((By.ID, "tritem_3"))
         )
 
-        #        <table class="table_list" id="id_modemTable">
-        #        <tbody>
-        #        <tr class="even_tr"><th colspan="3" style="text-align: center;">
-        #        Langattoman verkon tila</th></tr>
-        #        <tr class="module_content_center odd_tr" id="tritem_1">
-        #        <td>1</td><td>PLMN:</td><td>24405</td></tr>
-        #        <tr class="module_content_center even_tr" id="tritem_2">
-        #        <td>2</td><td>Palvelun tila:</td><td>Kelvollinen palvelu</td></tr>
-        #        <tr class="module_content_center odd_tr" id="tritem_3"><td>3</td>
-        #        <td>RSSI (dBm):</td><td>-48.0</td></tr>
-        #        <tr class="module_content_center even_tr" id="tritem_4"><td>4</td>
-        #        <td>RSRP (dBm):</td><td>-76.0</td></tr>
-        #        <tr class="module_content_center odd_tr" id="tritem_5"><td>5</td>
-        #        <td>RSRQ (dB):</td><td>-8.0</td></tr>
-        #        <tr class="module_content_center even_tr" id="tritem_6"><td>6</td>
-        #        <td>Verkkovierailu:</td><td>Ei</td></tr>
-        #        </tbody></table>
+        # <table class="table_list" id="id_modemTable">
+        # <tbody>
+        # <tr class="even_tr"><th colspan="3" style="text-align: center;">
+        # Langattoman verkon tila</th></tr>
+        # <tr class="module_content_center odd_tr" id="tritem_1">
+        # <td>1</td><td>PLMN:</td><td>24405</td></tr>
+        # <tr class="module_content_center even_tr" id="tritem_2">
+        # <td>2</td><td>Palvelun tila:</td><td>Kelvollinen palvelu</td></tr>
+        # <tr class="module_content_center odd_tr" id="tritem_3"><td>3</td>
+        # <td>RSSI (dBm):</td><td>-48.0</td></tr>
+        # <tr class="module_content_center even_tr" id="tritem_4"><td>4</td>
+        # <td>RSRP (dBm):</td><td>-76.0</td></tr>
+        # <tr class="module_content_center odd_tr" id="tritem_5"><td>5</td>
+        # <td>RSRQ (dB):</td><td>-8.0</td></tr>
+        # <tr class="module_content_center even_tr" id="tritem_6"><td>6</td>
+        # <td>Verkkovierailu:</td><td>Ei</td></tr>
+        # </tbody></table>
 
         mapping = {"tritem_3": "rssi", "tritem_4": "rsrp", "tritem_5": "rsrq"}
         soup = BeautifulSoup(browser.page_source, "html.parser")
@@ -156,7 +158,12 @@ def main():
     """
     get stats and push to prometheus pushgateway
     """
-    b593 = HuaweiB593()
+    load_dotenv()
+    b593 = HuaweiB593(
+        host=os.environ.get("B593_HOST", "192.168.1.1"),
+        user=os.environ.get("B593_USER", "admin"),
+        password=os.environ.get("B593_PASS", "admin"),
+    )
     registry = CollectorRegistry()
     signal = Gauge(
         "b593_signal",
@@ -180,9 +187,7 @@ def main():
         gauges[i] = Gauge("b593_" + i, "Huawei B593 " + i, registry=registry)
         gauges[i].set(scrape[i])
     pushadd_to_gateway(
-        "https://pushgateway-aarno-srf2spotify.appuioapp.ch",
-        registry=registry,
-        job="b593",
+        os.environ.get("PROM_GATEWAY"), registry=registry, job="b593"
     )
 
 
