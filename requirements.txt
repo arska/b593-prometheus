@@ -13,7 +13,7 @@ idna==2.8                 # via requests
 pluggy==0.9.0             # via tox
 prometheus-client==0.6.0
 py==1.8.0                 # via tox
-python-dotenv==0.10.1
+python-dotenv==0.10.3
 requests==2.21.0
 selenium==3.141.0
 six==1.12.0               # via tox, tox-pip-extensions
