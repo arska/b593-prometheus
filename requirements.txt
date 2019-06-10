@@ -11,7 +11,7 @@ chardet==3.0.4            # via requests
 filelock==3.0.10          # via tox
 idna==2.8                 # via requests
 pluggy==0.9.0             # via tox
-prometheus-client==0.6.0
+prometheus-client==0.7.0
 py==1.8.0                 # via tox
 python-dotenv==0.10.1
 requests==2.21.0
@@ -24,3 +24,5 @@ tox==3.9.0
 urllib3==1.24.3           # via requests, selenium
 virtualenv==16.5.0        # via tox
 xmltodict==0.12.0
+
+#
