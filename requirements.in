@@ -4,5 +4,3 @@ python-dotenv
 requests
 selenium
 xmltodict
-tox
-tox-pip-extensions
