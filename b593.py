@@ -47,9 +47,7 @@ class HuaweiB593:
         Get status endpoint
         """
         status = xmltodict.parse(
-            self.session.post(
-                self.base_url + "/index/getStatusByAjax.cgi"
-            ).text
+            self.session.post(self.base_url + "/index/getStatusByAjax.cgi").text
         )
         return status["Status"]
 
@@ -115,9 +113,7 @@ class HuaweiB593:
         #        'liveTime' : '87921988'};
 
         stats = re.compile(r"WanStatistics = (\{.+\});")
-        stats = json.loads(
-            stats.search(browser.page_source).group(1).replace("'", '"')
-        )
+        stats = json.loads(stats.search(browser.page_source).group(1).replace("'", '"'))
 
         browser.get(self.base_url + "/html/management/diagnose.asp")
         elem = browser.find_element_by_id("id_modemRadio")
@@ -151,6 +147,9 @@ class HuaweiB593:
             row = soup.find(id=tag).find_all("td")
             stats[mapping[tag]] = row[2].string
 
+        elem = browser.find_element_by_id("logout_span")
+        elem.click()
+
         return stats
 
 
@@ -171,14 +170,10 @@ def main():
         registry=registry,
     )
     signal.set_function(b593.signal)
-    mode = Gauge(
-        "b593_mode", "Huawei B593 signal mode (2g/3g/4g)", registry=registry
-    )
+    mode = Gauge("b593_mode", "Huawei B593 signal mode (2g/3g/4g)", registry=registry)
     mode.set_function(b593.mode)
     timer = Summary(
-        "b593_scrapetime",
-        "time to scrape and parse all infos",
-        registry=registry,
+        "b593_scrapetime", "time to scrape and parse all infos", registry=registry,
     )
     with timer.time():
         scrape = b593.scrape()
@@ -186,9 +181,7 @@ def main():
     for i in scrape:
         gauges[i] = Gauge("b593_" + i, "Huawei B593 " + i, registry=registry)
         gauges[i].set(scrape[i])
-    pushadd_to_gateway(
-        os.environ.get("PROM_GATEWAY"), registry=registry, job="b593"
-    )
+    pushadd_to_gateway(os.environ.get("PROM_GATEWAY"), registry=registry, job="b593")
 
 
 if __name__ == "__main__":
