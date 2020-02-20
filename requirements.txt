@@ -11,7 +11,7 @@ chardet==3.0.4            # via requests
 idna==2.8                 # via requests
 prometheus-client==0.7.1
 python-dotenv==0.10.5
-requests==2.22.0
+requests==2.23.0
 selenium==3.141.0
 soupsieve==1.9.5          # via beautifulsoup4
 urllib3==1.25.8           # via requests, selenium
