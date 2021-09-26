@@ -7,7 +7,7 @@
 beautifulsoup4==4.10.0     # via bs4
 bs4==0.0.1
 certifi==2020.12.5       # via requests
-chardet==3.0.4            # via requests
+chardet==4.0.0            # via requests
 idna==2.10                 # via requests
 prometheus-client==0.11.0
 python-dotenv==0.19.0
