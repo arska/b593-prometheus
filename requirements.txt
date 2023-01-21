@@ -16,7 +16,7 @@ idna==3.4
     # via requests
 prometheus-client==0.15.0
     # via -r requirements.in
-python-dotenv==0.21.0
+python-dotenv==0.21.1
     # via -r requirements.in
 requests==2.28.2
     # via -r requirements.in
